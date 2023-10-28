@@ -7,9 +7,8 @@ from config import settings
 
 
 class AlphaVantageAPI:
-    def __init__(self, api_key = settings.api_key):
-    
-        self.__api_key = api_key
+    def __init__(self, api_key=settings.api_key):
+        self.__api_key=api_key
 
     def get_symbol(self, keywords):
         """Get the best match of the key woards.
@@ -26,19 +25,19 @@ class AlphaVantageAPI:
             value : name of company
         """
         keywords = keywords
-        
+
         url = (
             "https://www.alphavantage.co/query?"
             "function=SYMBOL_SEARCH"
             f"&keywords={keywords}"
             f"&apikey={settings.api_key}"
             )
-        response = requests.get(url=url)
-        response_data = response.json()
+        response=requests.get(url=url)
+        response_data=response.json()
         bestMatches=response_data.get('bestMatches')
         search = {}
-        for i in bestMatches:
-            search[i] = (bestMatches[i].get('1. symbol'), bestMatches[i].get('2. name'))
+        for i in range(len(bestMatches)):
+            search[str((bestMatches[i].get('1. symbol'), bestMatches[i].get('2. name')))] = bestMatches[i].get('1. symbol')
         return search
 
     def get_daily(self, ticker, output_size = "full"):
@@ -61,9 +60,9 @@ class AlphaVantageAPI:
             All are numeric.
         """
         # Create URL (8.1.5)
-        ticker = ticker
-        output_size = output_size
-        data_type = "json"
+        ticker=ticker
+        output_size=output_size
+        data_type="json"
 
         url = (
             "https://www.alphavantage.co/query?"
@@ -75,10 +74,10 @@ class AlphaVantageAPI:
         )
 
         # Send request to API (8.1.6)
-        response = requests.get(url=url)
+        response=requests.get(url=url)
 
         # Extract JSON data from response (8.1.10)
-        response_data = response.json()
+        response_data=response.json()
 
         if "Time Series (Daily)" not in response_data.keys():
             raise Exception(
@@ -86,18 +85,15 @@ class AlphaVantageAPI:
             )
 
         # Read data into DataFrame (8.1.12 & 8.1.13)
-        stock_data = response_data["Time Series (Daily)"]
-        df= pd.DataFrame.from_dict(stock_data, orient = "index", dtype = float)
+        stock_data=response_data["Time Series (Daily)"]
+        df=pd.DataFrame.from_dict(stock_data, orient = "index", dtype = float)
 
         # Convert index to `DatetimeIndex` named "date" (8.1.14)
-        df.index = pd.to_datetime(df.index)
-        df.index.name = "date"
+        df.index=pd.to_datetime(df.index)
+        df.index.name="date"
 
         # Remove numbering from columns (8.1.15)
-        df.columns = [c.split(" ")[1] for c in df.columns]
-
-
-        # Return DataFrame
+        df.columns=[c.split(" ")[1] for c in df.columns]
         return df
 
     def get_overview(self, ticker):
@@ -114,7 +110,7 @@ class AlphaVantageAPI:
         info about the company
         """
         
-        ticker = ticker
+        ticker=ticker
         
         url = (
             "https://www.alphavantage.co/query?"
@@ -123,6 +119,6 @@ class AlphaVantageAPI:
             f"&apikey={settings.api_key}"
             )
         
-        response = requests.get(url=url)
-        response_data = response.json()
+        response=requests.get(url=url)
+        response_data=response.json()
         return response_data
