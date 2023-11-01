@@ -17,6 +17,8 @@ from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM
 import re
+import warnings
+warnings.filterwarnings("ignore")
 import numpy as np
 
 
@@ -37,7 +39,7 @@ class ArimaModelBuilder:
     def parameters(self):
         """define the parameters of the model"""
         self.y = self.new_df["close"].fillna(method = "ffill")
-        self.df_log = np.log(self.y)
+        self.df_log = self.y
         model_autoARIMA = auto_arima(self.df_log, start_p=0,
                                      start_q=0, start_P=0,
                                      start_Q=0, test='adf', error_action='trace')
@@ -60,15 +62,23 @@ class ArimaModelBuilder:
         self.order_aa = self.get_parametes.get('order')
         self.model_arima = ARIMA(self.y_train,
                         order = (self.order_aa[0], self.order_aa[1], self.order_aa[2]))
-        self.result = self.model_arima.fit(disp=0)
+        self.result = self.model_arima.fit()
         summary = self.result.summary()
         return summary
 
     def predict(self):
         """"""
-        self.y_pred_wfv = self.result.predict(start = len(self.train), end = (len(self.train)+len(self.test)+10), dynamic=True)
-        df_predictions = pd.DataFrame({"train" : self.train.close, "test" : self.test.close, "predict" : self.y_pred_wfv})
-        fig = px.line(df_predictions)
+        self.y_pred_wfv = self.result.get_forecast(len(self.y_test)+10)
+        self.predicted = self.y_pred_wfv.predicted_mean
+        self.lower = self.y_pred_wfv.conf_int(0.05).iloc[:, 0]
+        self.upper = self.y_pred_wfv.conf_int(0.05).iloc[:, 1]
+        self.df_predictions = pd.DataFrame({"train" : self.y_train, "test" : self.y_test, "predict" : self.predicted})
+        fig = go.Figure()
+        fig.add_trace(go.Line(x=self.y_train.index,y=self.y_train))
+        fig.add_trace(go.Line(x=self.y_test.index,y=self.y_test))
+        fig.add_trace(go.Line(x=self.predicted.index,y=self.predicted))
+        fig.add_trace(go.Line(x=self.lower.index, y=self.lower))
+        fig.add_trace(go.Line(x=self.upper.index, y=self.upper,fill='tonexty'))
         return fig
 
     def forecast(self):
@@ -76,15 +86,13 @@ class ArimaModelBuilder:
         self.y_pred_wfv = pd.Series()
         self.history = self.y_train.copy()
         for i in range(len(self.y_test)):
-            self.model = ARIMA(self.y_train,
-                        order = (self.order_aa[0], self.order_aa[1], self.order_aa[2]))
+            self.model = ARIMA(self.history, order = (self.order_aa[0], self.order_aa[1], self.order_aa[2])).fit()
             self.next_pred = self.model.forecast()
             self.y_pred_wfv = self.y_pred_wfv.append(self.next_pred)
             self.history = self.history.append(self.y_test[self.next_pred.index])
-            self.df_predictions = pd.DataFrame({"y_train" : self.y_train,"y_test" : self.y_test,
-                                                "y_pred" : self.y_pred_wfv})
-            fig = px.line(self.df_predictions)
-            return fig
+        self.df_predictions = pd.DataFrame({"train" : self.y_train, "y_test" : self.y_test,"y_pred" : self.y_pred_wfv})
+        fig = px.line(self.df_predictions)
+        return fig
 
 class LSTMModelBuilder:
     """"""

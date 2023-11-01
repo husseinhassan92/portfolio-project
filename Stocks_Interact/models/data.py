@@ -24,12 +24,12 @@ class AlphaVantageAPI:
             key : symbol,
             value : name of company
         """
-        keywords = keywords
+        self.keywords = keywords
 
         url = (
             "https://www.alphavantage.co/query?"
             "function=SYMBOL_SEARCH"
-            f"&keywords={keywords}"
+            f"&keywords={self.keywords}"
             f"&apikey={settings.api_key}"
             )
         response=requests.get(url=url)
