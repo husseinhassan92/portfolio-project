@@ -26,12 +26,14 @@ av = AlphaVantageAPI()
 
 
 class ArimaModelBuilder:
-    def __init__(self,ticker="", n_observations=7000):
+    def __init__(self,ticker="", n_observations=10000):
         self.ticker = ticker
         self.n_observations = n_observations
-        df = av.get_daily(self.ticker)
+
+    def get_data(self, ticker="", n_observations=10000):
+        df = av.get_daily(ticker)
         if self.n_observations <= len(df):
-            self.new_df = df.iloc[:self.n_observations, :]
+            self.new_df = df.iloc[:n_observations, :]
         else:
             self.new_df = df
         self.new_df = self.new_df.asfreq('d')
@@ -96,22 +98,24 @@ class ArimaModelBuilder:
 
 class LSTMModelBuilder:
     """"""
-    def __init__(self,ticker="", n_observations=7000):
+    def __init__(self,ticker="", n_observations=10000):
         self.ticker = ticker
         self.n_observations = n_observations
-        df = av.get_daily(self.ticker)
+
+    def get_data(self, ticker="", n_observations=10000):
+        df = av.get_daily(ticker)
         if self.n_observations <= len(df):
-            self.new_df = df.iloc[:self.n_observations, :]
+            self.new_df = df.iloc[:n_observations, :]
         else:
             self.new_df = df
         self.new_df = self.new_df.asfreq('d')
 
     def prepare_data(self):
         """define the parameters of the model"""
-        self.data= self.new_df["close"].fillna(method = "ffill")
+        self.data= self.new_df[["close"]].fillna(method = "ffill")
         self.dataset = self.data.values
-        scaler = MinMaxScaler(feature_range=(0,1))
-        self.scaled_data = scaler.fit_transform(self.dataset)
+        self.scaler = MinMaxScaler(feature_range=(0,1))
+        self.scaled_data = self.scaler.fit_transform(self.dataset)
         y = self.scaled_data
         return y
 
@@ -150,6 +154,7 @@ class LSTMModelBuilder:
 
     def predict(self):
         """"""
+
         self.predictions = self.model.predict(self.x_test)
         self.predictions = self.scaler.inverse_transform(self.predictions)
         rmse = np.sqrt(np.mean(((self.predictions - self.y_test) ** 2)))

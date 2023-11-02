@@ -19,9 +19,11 @@ class GraphBuilder:
     def __init__(self,ticker="", n_observations=255):
         self.ticker = ticker
         self.n_observations = n_observations
-        df = av.get_daily(self.ticker)
+
+    def get_data(self, ticker="", n_observations=255):
+        df = av.get_daily(ticker)
         if self.n_observations <= len(df):
-            self.new_df = df.iloc[:self.n_observations, :]
+            self.new_df = df.iloc[:n_observations, :]
         else:
             self.new_df = df
 
