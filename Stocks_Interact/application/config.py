@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     """Uses pydantic to define settings for project."""
 
     api_key: str
+    secret_key: str
 
     class Config:
         env_file = return_full_path(".env")
