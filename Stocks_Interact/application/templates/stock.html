@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>stock Page {{ symbol }}</h1>
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="{{ home }}">{{ stock.symbol }}</a>
+        </div>
+        <h2><a class="article-title" href="{{ home }}">{{ stock.name }}</a></h2>
+        <a class="article-content" >{{ stock.industry }}</a>
+        <a class="article-content" >{{ stock.sector }}</a>
+    </div>
+</article>
+{% endblock content %}

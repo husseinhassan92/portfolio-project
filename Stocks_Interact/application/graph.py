@@ -4,7 +4,7 @@
 import pandas as pd
 import requests
 from config import settings
-from models.data import AlphaVantageAPI
+from application.data import AlphaVantageAPI
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px

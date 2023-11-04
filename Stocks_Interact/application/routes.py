@@ -3,6 +3,11 @@ from application import app, db, bcrypt
 from application.forms import RegistrationForm, LoginForm
 from application.database import User, Wallet, Stock
 from flask_login import login_user, current_user, logout_user, login_required
+from application.graph import GraphBuilder
+
+graph = GraphBuilder()
+
+
 
 
 
@@ -60,6 +65,21 @@ def logout():
 @login_required
 def wallet():
     return render_template('wallet.html', title='Wallet')
+
+@app.route('/search')
+def search():
+    query = request.args.get('search')
+    stocks = Stock.query.filter((Stock.name.like('%' + query + '%')) | (Stock.symbol.like('%' + query + '%'))).all()
+    return render_template('search.html', stocks=stocks)
+
+
+@app.route("/stock/<string:symbol>")
+def stock(symbol):
+    stock = Stock.query.filter_by(symbol=symbol).first()
+    graph.get_data(symbol)
+    close = graph.close_graph()
+    return render_template('stock.html',symbol=symbol, stock=stock)
+
 
 
 
