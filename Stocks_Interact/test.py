@@ -4,7 +4,7 @@
 import pandas as pd
 import requests
 from config import settings
-from application.data import AlphaVantageAPI
+from test_data import AlphaVantageAPI
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
@@ -59,13 +59,17 @@ class ArimaModelBuilder:
         len_test = len(self.y_test)
         return len_train, len_test
 
+    def model(self):
+        """fit the arima model"""
+        self.order_aa = self.get_parametes.get('order')
+        self.model_arima = ARIMA(self.y_train,
+                        order = (self.order_aa[0], self.order_aa[1], self.order_aa[2]))
+        self.result = self.model_arima.fit()
+        summary = self.result.summary()
+        return summary
 
     def predict(self):
         """"""
-        self.order_aa = self.get_parametes.get('order')
-        self.model_arima = ARIMA(self.y_train,
-                                 order = (self.order_aa[0], self.order_aa[1], self.order_aa[2]))
-        self.result = self.model_arima.fit()
         self.y_pred_wfv = self.result.get_forecast(len(self.y_test)+10)
         self.predicted = self.y_pred_wfv.predicted_mean
         self.lower = self.y_pred_wfv.conf_int(0.05).iloc[:, 0]
@@ -84,10 +88,10 @@ class ArimaModelBuilder:
         self.y_pred_wfv = pd.Series()
         self.history = self.y_train.copy()
         for i in range(len(self.y_test)):
-            self.model = ARIMA(self.history, order = (self.order_aa[0], self.order_aa[1], self.order_aa[2])).fit()
+            self.model_forecast = ARIMA(self.history, order = (self.order_aa[0], self.order_aa[1], self.order_aa[2])).fit()
             self.next_pred = self.model.forecast()
-            self.y_pred_wfv = self.y_pred_wfv._append(self.next_pred)
-            self.history = self.history._append(self.y_test[self.next_pred.index])
+            self.y_pred_wfv = self.y_pred_wfv.append(self.next_pred)
+            self.history = self.history.append(self.y_test[self.next_pred.index])
         self.df_predictions = pd.DataFrame({"train" : self.y_train, "y_test" : self.y_test,"y_pred" : self.y_pred_wfv})
         fig = px.line(self.df_predictions)
         return fig

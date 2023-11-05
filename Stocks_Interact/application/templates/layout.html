@@ -36,7 +36,7 @@
                     <div class="input-group">
                       <input class="form-control mr-sm-2" name="search" type="search" id="search" placeholder="Search" aria-label="Search">
                       <span class="input-group-btn">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
                         <i class="glyphicon glyphicon-search" aria-hidden="true"></i>
                       </span>
                     </div>
@@ -70,9 +70,12 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-          {% block content %}{% endblock %}
         </div>
-        <div class="col-md-4">
+        <div class="col-md-12 col-sm-12 col-xm-12">
+          <div class="ml-auto mr-auto">
+            {% block content %}
+            {% endblock %}
+          </div>
         </div>
       </div>
     </main>

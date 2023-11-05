@@ -30,13 +30,13 @@ class GraphBuilder:
     def close_graph(self):
         """time series graph about closing prices"""
         fig = px.line(self.new_df, x=self.new_df.index, y=self.new_df['close'],
-                      title=f"Closing Price of {self.ticker}")
+                      title=f"Closing Price")
         return fig
 
     def volume_graph(self):
         """time series graph about Sales Volume"""
         fig = px.line(self.new_df, x=self.new_df.index, y=self.new_df['volume'],
-                      title=f"Sales Volume for {self.ticker}")
+                      title=f"Sales Volume")
         return fig
 
     def moving_average(self, n_days=10):
@@ -44,18 +44,14 @@ class GraphBuilder:
         self.new_df[f"MA for {n_days} days"] = self.new_df['close'].rolling(n_days).mean()
         fig = px.line(self.new_df, x=self.new_df.index,
                       y=['close',f"MA for {n_days} days"],
-                      title=f"Moving Average of {n_days} days for {self.ticker}")
+                      title=f"Moving Average of {n_days} days")
         return fig
 
     def daily_return(self):
         """graph about daily return"""
         self.new_df['Daily Return'] = self.new_df['close'].pct_change()
-        fig = make_subplots(rows=2, cols=1,
-                    subplot_titles=(f"Daily Return for {self.ticker}", "Most Frequent Daily Return"))
-        fig.append_trace(go.Line(x=self.new_df.index,
-                                 y=self.new_df['Daily Return']), row=1, col=1)
-        fig.append_trace(go.Histogram(x=self.new_df['Daily Return']), row=2, col=1)
-        fig.update_layout(height=1000, width=1000, title_text="Daily Return")
+        fig = px.line(self.new_df, x=self.new_df.index,y=self.new_df['Daily Return'],
+                      title=f"Daily Return")
         
         return fig
 
