@@ -9,6 +9,7 @@ df['Country'].fillna('Global',inplace=True)
 df['IPO Year'].fillna(0,inplace=True)
 df['Sector'].fillna('Multi',inplace=True)
 df['Industry'].fillna('Multi',inplace=True)
+db.drop_all()
 db.create_all()
 from application.database import User, Wallet, Stock
 for index, row in df.iterrows():

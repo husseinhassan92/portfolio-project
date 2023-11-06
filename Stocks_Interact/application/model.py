@@ -138,7 +138,7 @@ class LSTMModelBuilder:
         self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], self.x_test.shape[1], 1 ))
 
 
-    def model(self):
+    def graph(self):
         """"""
         self.model = Sequential()
         self.model.add(LSTM(128, return_sequences=True, input_shape= (self.x_train.shape[1], 1)))
@@ -147,17 +147,8 @@ class LSTMModelBuilder:
         self.model.add(Dense(1))
         self.model.compile(optimizer='adam', loss='mean_squared_error')
         self.model.fit(self.x_train, self.y_train, batch_size=1, epochs=1)
-
-    def predict(self):
-        """"""
-
         self.predictions = self.model.predict(self.x_test)
         self.predictions = self.scaler.inverse_transform(self.predictions)
-        rmse = np.sqrt(np.mean(((self.predictions - self.y_test) ** 2)))
-        return rmse
-
-    def graph(self):
-        """"""
         self.train = self.data[:self.training_data_len]
         self.valid = self.data[self.training_data_len:]
         self.valid['Predictions'] = self.predictions

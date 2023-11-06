@@ -29,14 +29,12 @@ class GraphBuilder:
 
     def close_graph(self):
         """time series graph about closing prices"""
-        fig = px.line(self.new_df, x=self.new_df.index, y=self.new_df['close'],
-                      title=f"Closing Price")
+        fig = px.line(self.new_df, x=self.new_df.index, y=self.new_df['close'])
         return fig
 
     def volume_graph(self):
         """time series graph about Sales Volume"""
-        fig = px.line(self.new_df, x=self.new_df.index, y=self.new_df['volume'],
-                      title=f"Sales Volume")
+        fig = px.line(self.new_df, x=self.new_df.index, y=self.new_df['volume'])
         return fig
 
     def moving_average(self, n_days=10):
@@ -50,8 +48,7 @@ class GraphBuilder:
     def daily_return(self):
         """graph about daily return"""
         self.new_df['Daily Return'] = self.new_df['close'].pct_change()
-        fig = px.line(self.new_df, x=self.new_df.index,y=self.new_df['Daily Return'],
-                      title=f"Daily Return")
+        fig = px.line(self.new_df, x=self.new_df.index,y=self.new_df['Daily Return'])
         
         return fig
 
@@ -60,6 +57,5 @@ class GraphBuilder:
         returns = self.new_df['close'].pct_change()
         rets = returns.dropna()
         fig = px.scatter(x=[rets.mean(),0], y=[rets.std(),0],
-                labels=dict(x='Expected return', y='Risk'),
-                title = f'risk by investing in {self.ticker}')
+                labels=dict(x='Expected return', y='Risk'))
         return fig

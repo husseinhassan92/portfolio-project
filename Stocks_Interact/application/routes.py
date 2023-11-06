@@ -3,6 +3,7 @@ from application import app, db, bcrypt
 from application.forms import RegistrationForm, LoginForm
 from application.database import User, Wallet, Stock
 from flask_login import login_user, current_user, logout_user, login_required
+from application.data import AlphaVantageAPI
 from application.graph import GraphBuilder
 from application.model import ArimaModelBuilder, LSTMModelBuilder
 import pandas as pd
@@ -10,6 +11,7 @@ import json
 import plotly
 import plotly.express as px
 
+av = AlphaVantageAPI()
 graph = GraphBuilder()
 arima = ArimaModelBuilder()
 ltsm = LSTMModelBuilder()
@@ -25,9 +27,6 @@ def home():
     return render_template('home.html')
 
 
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -71,7 +70,13 @@ def logout():
 @app.route("/wallet")
 @login_required
 def wallet():
-    return render_template('wallet.html', title='Wallet')
+    list_stocks = []
+    wallets = Wallet.query.filter_by(user_id=current_user.id).all()
+    for wallet in wallets:
+        stock = Stock.query.filter_by(id = wallet.stock_id).first()
+        list_stocks.append(stock)
+
+    return render_template('wallet.html', title='Wallet', list_stocks=list_stocks)
 
 
 @app.route("/addwallet/<string:symbol>")
@@ -79,22 +84,28 @@ def wallet():
 def addwallet(symbol):
     user = User.query.filter_by(id=current_user.id).first()
     stock = Stock.query.filter_by(symbol=symbol).first()
-    wallet = Wallet(user_id=user.id, stock_id=stock.id)
-    db.session.add(wallet)
-    db.session.commit()
-    flash('Added to wallet', 'success')
+    if Wallet.query.filter_by(user_id=user.id, stock_id=stock.id).first():
+        flash('Already added', 'danger')
+    else:
+        wallet = Wallet(user_id=user.id, stock_id=stock.id)
+        db.session.add(wallet)
+        db.session.commit()
+        flash('Added to wallet', 'success')
     return render_template('addwallet.html', stock=stock)
 
 @app.route('/search', methods=['GET','POST'])
 def search():
     query = request.args.get('search')
     stocks = Stock.query.filter((Stock.name.like('%' + query + '%')) | (Stock.symbol.like('%' + query + '%'))).all()
-    return render_template('search.html', stocks=stocks, query=query)
+    return render_template('search.html', title='Search', stocks=stocks, query=query)
 
 
 @app.route("/stock/<string:symbol>")
 def stock(symbol):
     stock = Stock.query.filter_by(symbol=symbol).first()
+
+    Description = av.get_overview(symbol).get('Description')
+
     graph.get_data(symbol)
     close = graph.close_graph()
     graph1JSON = json.dumps(close, cls=plotly.utils.PlotlyJSONEncoder)
@@ -124,12 +135,11 @@ def stock(symbol):
     ltsm.get_data(symbol)
     ltsm.prepare_data()
     ltsm.split_data()
-    ltsm.model()
-    ltsm.predict()
     ltsm_graph = ltsm.graph()
     graph8JSON = json.dumps(ltsm_graph, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template('stock.html',symbol=symbol, stock=stock, close=graph1JSON, volume=graph2JSON,
+    return render_template('stock.html',title='Stock', symbol=symbol, stock=stock, Description=Description,
+                           close=graph1JSON, volume=graph2JSON,
                            m_avg=graph3JSON, daily_return=graph4JSON,
                            risk=graph5JSON, predict=graph6JSON,
                            forecast=graph7JSON, ltsm_graph=graph8JSON)

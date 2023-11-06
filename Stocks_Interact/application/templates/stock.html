@@ -4,9 +4,17 @@
 <article class="media content-section">
     <div class="media-body">
         <div class="article-metadata">
-            <a class="mr-2" href="{{ home }}">{{ stock.symbol }}</a>
+            <a class="mr-2" href="#">{{ stock.symbol }}</a>
+            <div class="text-right"> 
+                {% if current_user.is_authenticated %}
+                <a class="btn btn-primary" href="{{ url_for('addwallet', symbol=stock.symbol)}}" role="button">Add</a>
+                {% else %}
+                <a class="btn btn-primary" href="{{ url_for('login')}}" role="button">Add</a>
+                {% endif %}
+            </div>
         </div>
-        <h2><a class="article-title" href="{{ home }}">{{ stock.name }}</a></h2>
+        <h2><a class="article-title" href="#">{{ stock.name }}</a></h2>
+        <p class="card-text">{{ Description }}</p>
         <a class="article-content" >{{ stock.industry }}</a>
         <a class="article-content" >{{ stock.sector }}</a>
     </div>
@@ -15,16 +23,7 @@
     <div class="card m-auto" style="width: 100%;" data-aos="fade-left">
         <div class="card-body">
             <div id="chart1"></div>
-            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                Quibusdam beatae eos esse hic tempore, itaque dolor quod. Eligendi debitis 
-                doloremque itaque architecto velit autem suscipit ut laborum optio maxime at 
-                facere perspiciatis quae molestiae nemo, saepe impedit. Quaerat corporis eius 
-                libero fugit. Debitis non nobis repudiandae ex soluta vero repellendus omnis eos, 
-                voluptate mollitia dolorem asperiores sint itaque consequuntur voluptatum totam 
-                fugit aut nemo maiores! Laboriosam quidem error possimus nobis eligendi dolor aut 
-                ullam voluptas officiis similique placeat modi, eaque voluptates dolores odit optio, 
-                pariatur molestias. Eum praesentium totam error aliquam,
-                tempore in quia exercitationem! Temporibus corporis asperiores esse ipsum?</p>
+            <p class="card-text">Close price for {{ stock.symbol }}</p>
         </div>
         </div>
     </div>
@@ -32,16 +31,7 @@
         <div class="card m-auto" style="width: 100%;" data-aos="fade-left">
             <div class="card-body">
                 <div id="chart2"></div>
-                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                    Quibusdam beatae eos esse hic tempore, itaque dolor quod. Eligendi debitis 
-                    doloremque itaque architecto velit autem suscipit ut laborum optio maxime at 
-                    facere perspiciatis quae molestiae nemo, saepe impedit. Quaerat corporis eius 
-                    libero fugit. Debitis non nobis repudiandae ex soluta vero repellendus omnis eos, 
-                    voluptate mollitia dolorem asperiores sint itaque consequuntur voluptatum totam 
-                    fugit aut nemo maiores! Laboriosam quidem error possimus nobis eligendi dolor aut 
-                    ullam voluptas officiis similique placeat modi, eaque voluptates dolores odit optio, 
-                    pariatur molestias. Eum praesentium totam error aliquam,
-                    tempore in quia exercitationem! Temporibus corporis asperiores esse ipsum?</p>
+                <p class="card-text">Volume for {{ stock.symbol }}</p>
             </div>
             </div>
         </div>
@@ -49,16 +39,7 @@
             <div class="card m-auto" style="width: 100%;" data-aos="fade-left">
                 <div class="card-body">
                     <div id="chart3"></div>
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                        Quibusdam beatae eos esse hic tempore, itaque dolor quod. Eligendi debitis 
-                        doloremque itaque architecto velit autem suscipit ut laborum optio maxime at 
-                        facere perspiciatis quae molestiae nemo, saepe impedit. Quaerat corporis eius 
-                        libero fugit. Debitis non nobis repudiandae ex soluta vero repellendus omnis eos, 
-                        voluptate mollitia dolorem asperiores sint itaque consequuntur voluptatum totam 
-                        fugit aut nemo maiores! Laboriosam quidem error possimus nobis eligendi dolor aut 
-                        ullam voluptas officiis similique placeat modi, eaque voluptates dolores odit optio, 
-                        pariatur molestias. Eum praesentium totam error aliquam,
-                        tempore in quia exercitationem! Temporibus corporis asperiores esse ipsum?</p>
+                    <p class="card-text">Moving Average of 10 days for {{ stock.symbol }}</p>
                 </div>
                 </div>
             </div>
@@ -66,16 +47,7 @@
                 <div class="card m-auto" style="width: 100%;" data-aos="fade-left">
                     <div class="card-body">
                         <div id="chart4"></div>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                            Quibusdam beatae eos esse hic tempore, itaque dolor quod. Eligendi debitis 
-                            doloremque itaque architecto velit autem suscipit ut laborum optio maxime at 
-                            facere perspiciatis quae molestiae nemo, saepe impedit. Quaerat corporis eius 
-                            libero fugit. Debitis non nobis repudiandae ex soluta vero repellendus omnis eos, 
-                            voluptate mollitia dolorem asperiores sint itaque consequuntur voluptatum totam 
-                            fugit aut nemo maiores! Laboriosam quidem error possimus nobis eligendi dolor aut 
-                            ullam voluptas officiis similique placeat modi, eaque voluptates dolores odit optio, 
-                            pariatur molestias. Eum praesentium totam error aliquam,
-                            tempore in quia exercitationem! Temporibus corporis asperiores esse ipsum?</p>
+                        <p class="card-text">Daily Return for {{ stock.symbol }}</p>
                     </div>
                     </div>
                 </div>
@@ -83,16 +55,7 @@
                     <div class="card m-auto" style="width: 100%;" data-aos="fade-left">
                         <div class="card-body">
                             <div id="chart5"></div>
-                            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                                Quibusdam beatae eos esse hic tempore, itaque dolor quod. Eligendi debitis 
-                                doloremque itaque architecto velit autem suscipit ut laborum optio maxime at 
-                                facere perspiciatis quae molestiae nemo, saepe impedit. Quaerat corporis eius 
-                                libero fugit. Debitis non nobis repudiandae ex soluta vero repellendus omnis eos, 
-                                voluptate mollitia dolorem asperiores sint itaque consequuntur voluptatum totam 
-                                fugit aut nemo maiores! Laboriosam quidem error possimus nobis eligendi dolor aut 
-                                ullam voluptas officiis similique placeat modi, eaque voluptates dolores odit optio, 
-                                pariatur molestias. Eum praesentium totam error aliquam,
-                                tempore in quia exercitationem! Temporibus corporis asperiores esse ipsum?</p>
+                            <p class="card-text">risk by investing in {{ stock.symbol }}</p>
                         </div>
                         </div>
                     </div>
@@ -100,16 +63,7 @@
                         <div class="card m-auto" style="width: 100%;" data-aos="fade-left">
                             <div class="card-body">
                                 <div id="chart6"></div>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                                    Quibusdam beatae eos esse hic tempore, itaque dolor quod. Eligendi debitis 
-                                    doloremque itaque architecto velit autem suscipit ut laborum optio maxime at 
-                                    facere perspiciatis quae molestiae nemo, saepe impedit. Quaerat corporis eius 
-                                    libero fugit. Debitis non nobis repudiandae ex soluta vero repellendus omnis eos, 
-                                    voluptate mollitia dolorem asperiores sint itaque consequuntur voluptatum totam 
-                                    fugit aut nemo maiores! Laboriosam quidem error possimus nobis eligendi dolor aut 
-                                    ullam voluptas officiis similique placeat modi, eaque voluptates dolores odit optio, 
-                                    pariatur molestias. Eum praesentium totam error aliquam,
-                                    tempore in quia exercitationem! Temporibus corporis asperiores esse ipsum?</p>
+                                <p class="card-text">Forecasting the price of {{ stock.symbol }} using ARIMA model</p>
                             </div>
                             </div>
                         </div>
@@ -117,16 +71,7 @@
                             <div class="card m-auto" style="width: 100%;" data-aos="fade-left">
                                 <div class="card-body">
                                     <div id="chart7"></div>
-                                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                                        Quibusdam beatae eos esse hic tempore, itaque dolor quod. Eligendi debitis 
-                                        doloremque itaque architecto velit autem suscipit ut laborum optio maxime at 
-                                        facere perspiciatis quae molestiae nemo, saepe impedit. Quaerat corporis eius 
-                                        libero fugit. Debitis non nobis repudiandae ex soluta vero repellendus omnis eos, 
-                                        voluptate mollitia dolorem asperiores sint itaque consequuntur voluptatum totam 
-                                        fugit aut nemo maiores! Laboriosam quidem error possimus nobis eligendi dolor aut 
-                                        ullam voluptas officiis similique placeat modi, eaque voluptates dolores odit optio, 
-                                        pariatur molestias. Eum praesentium totam error aliquam,
-                                        tempore in quia exercitationem! Temporibus corporis asperiores esse ipsum?</p>
+                                    <p class="card-text">The predication of the price of {{ stock.symbol }} using ARIMA model</p>
                                 </div>
                                 </div>
                             </div>
@@ -134,16 +79,7 @@
                                 <div class="card m-auto" style="width: 100%;" data-aos="fade-left">
                                     <div class="card-body">
                                         <div id="chart8"></div>
-                                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                                            Quibusdam beatae eos esse hic tempore, itaque dolor quod. Eligendi debitis 
-                                            doloremque itaque architecto velit autem suscipit ut laborum optio maxime at 
-                                            facere perspiciatis quae molestiae nemo, saepe impedit. Quaerat corporis eius 
-                                            libero fugit. Debitis non nobis repudiandae ex soluta vero repellendus omnis eos, 
-                                            voluptate mollitia dolorem asperiores sint itaque consequuntur voluptatum totam 
-                                            fugit aut nemo maiores! Laboriosam quidem error possimus nobis eligendi dolor aut 
-                                            ullam voluptas officiis similique placeat modi, eaque voluptates dolores odit optio, 
-                                            pariatur molestias. Eum praesentium totam error aliquam,
-                                            tempore in quia exercitationem! Temporibus corporis asperiores esse ipsum?</p>
+                                        <p class="card-text">The predication of the price of {{ stock.symbol }} using LSTM model</p>
                                     </div>
                                     </div>
                                 </div>
