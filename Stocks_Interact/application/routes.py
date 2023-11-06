@@ -22,9 +22,14 @@ ltsm = LSTMModelBuilder()
 
 
 @app.route("/")
+def index():
+    return render_template('index.html')
+
+
 @app.route("/home")
 def home():
-    return render_template('home.html')
+    stocks = Stock.query.all()
+    return render_template('home.html', title='Search', stocks=stocks)
 
 
 
