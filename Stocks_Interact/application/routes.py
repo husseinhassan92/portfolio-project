@@ -26,10 +26,11 @@ def index():
     return render_template('index.html')
 
 
+
 @app.route("/home")
 def home():
     stocks = Stock.query.all()
-    return render_template('home.html', title='Search', stocks=stocks)
+    return render_template('home.html', title='Home', stocks=stocks)
 
 
 
@@ -149,6 +150,16 @@ def stock(symbol):
                            risk=graph5JSON, predict=graph6JSON,
                            forecast=graph7JSON, ltsm_graph=graph8JSON)
 
+
+@app.errorhandler(404)
+def error_404(error):
+    return render_template('404.html'), 404
+
+
+
+@app.errorhandler(500)
+def error_500(error):
+    return render_template('500.html'), 500
 
 
 
